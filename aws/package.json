@@ -14,13 +14,13 @@
     "analytics-node": "^4.0.1",
     "aws-sdk": "^2.799.0",
     "csv-parser": "^3.0.0",
-    "segment-typescript-definitions": "^0.2.11"
+    "segment-typescript-definitions": "^0.2.11",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@types/analytics-node": "^3.1.4",
     "@types/aws-lambda": "^8.10.73",
     "@types/node": "^14.14.36",
-    "@types/uuid": "^8.3.0",
-    "uuid": "^8.3.2"
+    "@types/uuid": "^8.3.0"
   }
 }
