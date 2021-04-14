@@ -60,9 +60,9 @@ var path = __importStar(require("path"));
 var AWS = __importStar(require("aws-sdk"));
 var fs = __importStar(require("fs"));
 var zlib = __importStar(require("zlib"));
-var BASE = path.join(__dirname, '..', '..');
-var OUTPUT = path.join(BASE, 'ui', 'dist', 'index.html');
-var UI_AWS = path.join(BASE, 'aws', 'built', 'ui.js');
+var BASE = path.join(__dirname, '..');
+var OUTPUT = path.join(BASE, 'out', 'index.html');
+var UI_AWS = path.join(BASE, 'built', 'ui.js');
 function lambda_base_url(credentials, region) {
     return __awaiter(this, void 0, void 0, function () {
         var A, ras, ra;

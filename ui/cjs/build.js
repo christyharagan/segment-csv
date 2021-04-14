@@ -26,11 +26,14 @@ exports.build_editor = void 0;
 const memory_fs_1 = __importDefault(require("memory-fs"));
 const webpack_1 = __importDefault(require("webpack"));
 const path = __importStar(require("path"));
+const fs = __importStar(require("fs"));
 const html_webpack_plugin_1 = __importDefault(require("html-webpack-plugin"));
 const html_webpack_inline_source_plugin_1 = __importDefault(require("html-webpack-inline-source-plugin"));
 const BASE = path.join(__dirname, '..');
 const EDITOR_SRC = path.join(BASE, 'web', 'editor.html');
 const EDITOR = path.join(BASE, 'cjs', 'index.js');
+const OUTPUT = path.join(BASE, 'dist', 'index.html');
+const SETUP_OUTPUT = path.join(__dirname, '..', '..', 'setup', 'out', 'index.html');
 const mem_fs = new memory_fs_1.default();
 function module_to_path(lib) {
     let pkg_root = path.join(require.resolve(path.join(lib[0], 'package.json')), '..');
@@ -92,6 +95,7 @@ function build_editor() {
                         reject(err);
                     }
                     else {
+                        fs.copyFileSync(OUTPUT, SETUP_OUTPUT);
                         // console.log(stats)
                         resolve(undefined);
                     }

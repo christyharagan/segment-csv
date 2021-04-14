@@ -92,8 +92,6 @@ function get_lambda_role(lambda, fn_name) {
         });
     });
 }
-// export async function substitute_region(region: string) {
-// }
 function config_for_s3(_a) {
     var lambdaAccessKeyId = _a.lambdaAccessKeyId, lambdaSecretAccessKey = _a.lambdaSecretAccessKey, s3BucketName = _a.s3BucketName, region = _a.region;
     return __awaiter(this, void 0, void 0, function () {
@@ -107,9 +105,6 @@ function config_for_s3(_a) {
                     lambda = get_aws(lambdaAccessKeyId, lambdaSecretAccessKey, region).lambda;
                     return [4 /*yield*/, Promise.all([
                             get_lambda(lambda, 'segment-csv-service'),
-                            // lambda.getFunction({
-                            //   FunctionName: 'segment-csv-service'
-                            // }).promise(),
                             get_lambda_role(lambda, 'segment-csv-service'),
                             get_lambda_role(lambda, 'segment-csv-config'),
                             get_lambda_role(lambda, 'segment-csv-test')
@@ -134,11 +129,7 @@ function setup(_a) {
                 var fn, roles, role_name;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, get_lambda(lambda, fn_name)
-                            // lambda.getFunction({
-                            //   FunctionName: fn_name
-                            // }).promise()
-                        ];
+                        case 0: return [4 /*yield*/, get_lambda(lambda, fn_name)];
                         case 1:
                             fn = _a.sent();
                             return [4 /*yield*/, iam.listRoles().promise()];

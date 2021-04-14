@@ -61,46 +61,27 @@ var aws_setup_1 = require("./aws_setup");
 var build_ui_1 = require("./build_ui");
 var AWS = __importStar(require("aws-sdk"));
 var path = __importStar(require("path"));
-var CWD = path.join(__dirname, '..', '..', 'aws');
+var CWD = path.join(__dirname, '..');
 function sam_deploy(lambdaS3Bucket) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, new Promise(function (resolve, reject) {
-                        // const sam = require('child_process').spawn,
                         var sam = child_process_1.spawn('sam', ['deploy', '--no-confirm-changeset', '--stack-name=segment-csv', '--s3-bucket=' + lambdaS3Bucket, '--capabilities=CAPABILITY_NAMED_IAM'], { cwd: CWD });
-                        // let failed = false
                         sam.stdout.on('data', function (data) {
                             console.log(data.toString());
                         });
                         sam.stderr.on('data', function (data) {
-                            // failed = true
                             console.error(data.toString());
                         });
                         sam.on('exit', function (code) {
                             if (code == 0 || code == 1) { // 1 means: Stack up-to-date
-                                // if (failed) {
-                                //   reject(undefined)
-                                // } else {
                                 resolve(undefined);
-                                // }
                             }
                             else {
                                 reject('"sam deploy" exited with code ' + code.toString());
                             }
                         });
-                        // exec('sam deploy --no-confirm-changeset --stack-name=segment-csv', { cwd: CWD }, (error, stdout, stderr) => {
-                        //   if (error) {
-                        //     console.error(`error: ${error.message}`)
-                        //     reject(error)
-                        //   } else if (stderr) {
-                        //     console.error(`stderr: ${stderr}`)
-                        //     reject(error)
-                        //   } else {
-                        //     console.log(`stdout: ${stdout}`)
-                        //     resolve(undefined)
-                        //   }
-                        // })
                     })];
                 case 1:
                     _a.sent();

@@ -7,7 +7,7 @@ Easily import CSVs into Segment. Deploys AWS lambdas into one account that perfo
 Install the deployer:
 
 ```
-npm i g segment-csv-setup
+npm i -g segment-csv-setup
 ```
 
 Then run the deployer

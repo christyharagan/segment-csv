@@ -3,9 +3,9 @@ import * as AWS from 'aws-sdk'
 import * as fs from 'fs'
 import * as zlib from 'zlib'
 
-const BASE = path.join(__dirname, '..', '..')
-const OUTPUT = path.join(BASE, 'ui', 'dist', 'index.html')
-const UI_AWS = path.join(BASE, 'aws', 'built', 'ui.js')
+const BASE = path.join(__dirname, '..')
+const OUTPUT = path.join(BASE, 'out', 'index.html')
+const UI_AWS = path.join(BASE, 'built', 'ui.js')
 
 export async function lambda_base_url(credentials: AWS.Credentials, region: string) {
   const A = new AWS.APIGateway({

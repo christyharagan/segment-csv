@@ -4,7 +4,7 @@ import { lambda_base_url, write_to_aws } from './build_ui'
 import * as AWS from 'aws-sdk'
 import * as path from 'path'
 
-const CWD = path.join(__dirname, '..', '..', 'aws')
+const CWD = path.join(__dirname, '..')
 
 async function sam_deploy(lambdaS3Bucket: string) {
   await new Promise((resolve, reject) => {

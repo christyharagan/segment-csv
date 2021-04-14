@@ -1,11 +1,14 @@
 import MemoryFS from 'memory-fs'
 import webpack, { Compiler, Plugin } from 'webpack'
 import * as path from 'path'
+import * as fs from 'fs'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import HtmlWebpackInlineSourcePlugin from 'html-webpack-inline-source-plugin'
 const BASE = path.join(__dirname, '..')
 const EDITOR_SRC = path.join(BASE, 'web', 'editor.html')
 const EDITOR = path.join(BASE, 'cjs', 'index.js')
+const OUTPUT = path.join(BASE, 'dist', 'index.html')
+const SETUP_OUTPUT = path.join(__dirname, '..', '..', 'setup', 'out', 'index.html')
 
 const mem_fs = new MemoryFS();
 
@@ -73,6 +76,7 @@ export function build_editor() {
                 console.error(err)
                 reject(err)
               } else {
+                fs.copyFileSync(OUTPUT, SETUP_OUTPUT)
                 // console.log(stats)
                 resolve(undefined)
               }

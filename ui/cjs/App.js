@@ -35,7 +35,6 @@ class App extends react_1.Component {
     constructor(props) {
         super(props);
         this.test = this.test.bind(this);
-        // this.fetch_config = this.fetch_config.bind(this)
         this.save = this.save.bind(this);
         this.load = this.load.bind(this);
         this.on_form_change = this.on_form_change.bind(this);
@@ -51,7 +50,6 @@ class App extends react_1.Component {
         this.setState({ code });
     }
     async test() {
-        // const test_file = //(document.getElementById('test_file') as HTMLInputElement).value
         const t = await fetch(`${SEGMENT_CSV_BASE_URL}test?key=${this.state.test}`, {
             body: JSON.stringify(Object.assign({ bucket: this.state.bucket, type: this.state.type }, JSON.parse(this.state.code))),
             method: 'post',
@@ -64,19 +62,8 @@ class App extends react_1.Component {
             console.log(e[0]);
             console.log(e[1]);
         });
-        // let text = (await t.text()).split('/n')
-        // if (text.length == 1) {
-        //   text = text[0].split('\n') // Wierd bug and even stupider hack. No time or will to figure out what's actually going on here
-        // }
-        // text.forEach(line => {
-        //   const i = line.indexOf(':') + 1
-        //   console.log(line.substring(0, i))
-        //   console.log(JSON.parse(line.substring(i + 1)))
-        // })
     }
     async load() {
-        // type = _type
-        // bucket = _bucket
         const t = await fetch(`${SEGMENT_CSV_BASE_URL}fetch?type=${this.state.type}&bucket=${this.state.bucket}`, {
             method: 'get',
             headers: {
@@ -120,21 +107,6 @@ class App extends react_1.Component {
     }
     async componentDidMount() {
         this.setState({ set_value: () => false });
-        // const qp = window.location.search.substring(1)
-        // const obj: { [key: string]: string } = {}
-        // if (qp.indexOf('=') != -1) {
-        //   qp.split('&').forEach(qp => {
-        //     let q = qp.split('=')
-        //     obj[q[0]] = q[1]
-        //   })
-        // }
-        // if (obj.type && obj.bucket) {
-        //   this.state.type = obj.type
-        //   this.state.bucket = obj.bucket
-        //   await this.fetch_config()
-        // } else {
-        //   console.error('Provide &type and &bucket query parameters')
-        // }
     }
     on_form_change(evt) {
         switch (evt.target.name) {
@@ -302,7 +274,4 @@ class App extends react_1.Component {
     }
 }
 exports.default = App;
-// const App = () => {
-// }
-// export default App
 //# sourceMappingURL=App.js.map
