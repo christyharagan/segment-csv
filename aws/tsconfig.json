@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "target": "ES2017",
+    "noImplicitAny": true,
+    "preserveConstEnums": true,
+    "rootDir": "./src",
+    "outDir": "./built",
+    "sourceMap": true,
+    "esModuleInterop": true
+  },
+  "include": ["src/**/*", "../src/setup.ts"],
+  "exclude": ["node_modules", "**/*.spec.ts"]
+}

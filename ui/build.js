@@ -1,0 +1,1 @@
+require('./cjs/build').build_editor()
