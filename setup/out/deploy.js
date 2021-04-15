@@ -62,12 +62,12 @@ var build_ui_1 = require("./build_ui");
 var AWS = __importStar(require("aws-sdk"));
 var path = __importStar(require("path"));
 var CWD = path.join(__dirname, '..');
-function sam_deploy(lambdaS3Bucket) {
+function sam_deploy(lambdaS3Bucket, cwd) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, new Promise(function (resolve, reject) {
-                        var sam = child_process_1.spawn('sam', ['deploy', '--no-confirm-changeset', '--stack-name=segment-csv', '--s3-bucket=' + lambdaS3Bucket, '--capabilities=CAPABILITY_NAMED_IAM'], { cwd: CWD });
+                        var sam = child_process_1.spawn('sam', ['deploy', '--no-confirm-changeset', '--force-upload', '--stack-name=segment-csv', '--s3-bucket=' + lambdaS3Bucket, '--capabilities=CAPABILITY_NAMED_IAM'], { cwd: cwd });
                         sam.stdout.on('data', function (data) {
                             console.log(data.toString());
                         });
@@ -92,42 +92,46 @@ function sam_deploy(lambdaS3Bucket) {
 }
 function deploy(config) {
     return __awaiter(this, void 0, void 0, function () {
-        var base_url, e_1;
+        var tmp_dir, built_dir, base_url, e_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, sam_deploy(config.lambdaS3Bucket)];
+                case 0: return [4 /*yield*/, aws_setup_1.prepare_aws()];
                 case 1:
-                    _a.sent();
-                    return [4 /*yield*/, aws_setup_1.setup(config)];
+                    tmp_dir = _a.sent();
+                    built_dir = path.join(tmp_dir, 'built');
+                    return [4 /*yield*/, sam_deploy(config.lambdaS3Bucket, tmp_dir)];
                 case 2:
                     _a.sent();
-                    return [4 /*yield*/, build_ui_1.write_to_aws(config.lambdaAccessKeyId, config.lambdaSecretAccessKey, config.region)];
+                    return [4 /*yield*/, aws_setup_1.setup(config)];
                 case 3:
                     _a.sent();
-                    return [4 /*yield*/, sam_deploy(config.lambdaS3Bucket)];
+                    return [4 /*yield*/, build_ui_1.write_to_aws(config.lambdaAccessKeyId, config.lambdaSecretAccessKey, config.region, built_dir)];
                 case 4:
                     _a.sent();
-                    console.log('-------------- WHAT FOLLOWS ARE THE DETAILS TO MANUALLY CONFIGURE THE s3 BUCKET --------------');
-                    _a.label = 5;
+                    return [4 /*yield*/, sam_deploy(config.lambdaS3Bucket, tmp_dir)];
                 case 5:
-                    _a.trys.push([5, 8, , 9]);
+                    _a.sent();
+                    console.log('-------------- WHAT FOLLOWS ARE THE DETAILS TO MANUALLY CONFIGURE THE s3 BUCKET --------------');
+                    _a.label = 6;
+                case 6:
+                    _a.trys.push([6, 9, , 10]);
                     return [4 /*yield*/, build_ui_1.lambda_base_url(new AWS.Credentials({
                             accessKeyId: config.lambdaAccessKeyId,
                             secretAccessKey: config.lambdaSecretAccessKey,
                         }), config.region)];
-                case 6:
+                case 7:
                     base_url = _a.sent();
                     console.log('UI URL: ' + base_url + 'ui');
                     console.log('');
                     return [4 /*yield*/, aws_setup_1.config_for_s3(config)];
-                case 7:
-                    _a.sent();
-                    return [3 /*break*/, 9];
                 case 8:
+                    _a.sent();
+                    return [3 /*break*/, 10];
+                case 9:
                     e_1 = _a.sent();
                     console.error(e_1);
                     throw e_1;
-                case 9: return [2 /*return*/];
+                case 10: return [2 /*return*/];
             }
         });
     });

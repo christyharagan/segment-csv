@@ -18,7 +18,7 @@ export async function lambda(event: { body: string, queryStringParameters: { key
   }
   const key = event.queryStringParameters.key
 
-  const { bucket, type, ...config } = JSON.parse(event.body) as Config & { bucket: string, type: string }
+  const { bucket, ...config } = JSON.parse(event.body) as Config & { bucket: string }
 
   let output = '['
 
@@ -44,7 +44,7 @@ export async function lambda(event: { body: string, queryStringParameters: { key
   return {
     statusCode: 200,
     headers: {},
-    body: output.substring(0, output.length - 1) + ']'
+    body: output.length == 1 ? '[]' : (output.substring(0, output.length - 1) + ']')
   }
 }
 

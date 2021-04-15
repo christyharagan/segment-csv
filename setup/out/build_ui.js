@@ -62,7 +62,7 @@ var fs = __importStar(require("fs"));
 var zlib = __importStar(require("zlib"));
 var BASE = path.join(__dirname, '..');
 var OUTPUT = path.join(BASE, 'out', 'index.html');
-var UI_AWS = path.join(BASE, 'built', 'ui.js');
+// const UI_AWS = path.join(BASE, 'built', 'ui.js')
 function lambda_base_url(credentials, region) {
     return __awaiter(this, void 0, void 0, function () {
         var A, ras, ra;
@@ -85,9 +85,9 @@ function lambda_base_url(credentials, region) {
 exports.lambda_base_url = lambda_base_url;
 var HTML_SEARCH = "const SEGMENT_CSV_BASE_URL = '";
 var AWS_SEARCH = "const UI = '";
-function write_to_aws(lambda_access_key, lambda_secret_key, region) {
+function write_to_aws(lambda_access_key, lambda_secret_key, region, built_dir) {
     return __awaiter(this, void 0, void 0, function () {
-        var credentials, base_url, s, i, ss, j, ui_output_1, e_1;
+        var credentials, base_url, s, i, ss, j, ui_output_1, UIJS_1, e_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -104,20 +104,19 @@ function write_to_aws(lambda_access_key, lambda_secret_key, region) {
                     ss = s.substring(i);
                     j = ss.indexOf('\'');
                     ui_output_1 = s.substring(0, i) + base_url + ss.substring(j);
+                    UIJS_1 = path.join(built_dir, 'ui.js');
                     return [4 /*yield*/, new Promise(function (resolve, reject) {
                             zlib.gzip(ui_output_1, function (error, gzipped_ui_output) {
                                 if (error) {
                                     reject(error);
                                 }
                                 else {
-                                    var aws_ui = fs.readFileSync(UI_AWS, 'utf8');
+                                    var aws_ui = fs.readFileSync(UIJS_1, 'utf8');
                                     var i_1 = aws_ui.indexOf(AWS_SEARCH) + AWS_SEARCH.length;
                                     var ss_1 = aws_ui.substring(i_1);
                                     var j_1 = ss_1.indexOf('\'');
-                                    console.log(i_1);
-                                    console.log(j_1);
                                     var aws_ui_output = aws_ui.substring(0, i_1) + gzipped_ui_output.toString('base64') + ss_1.substring(j_1);
-                                    fs.writeFileSync(UI_AWS, aws_ui_output, 'utf8');
+                                    fs.writeFileSync(UIJS_1, aws_ui_output, 'utf8');
                                     resolve(undefined);
                                 }
                             });

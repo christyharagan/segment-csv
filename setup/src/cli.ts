@@ -4,6 +4,7 @@ import * as yargs from 'yargs'
 import { config_for_s3, setup, SetupBasic, Setup } from './aws_setup'
 import { write_to_aws } from './build_ui'
 import { deploy } from './deploy'
+import * as path from 'path'
 
 yargs
   .command('deploy', 'Perform a full build and deploy.', {
@@ -40,7 +41,7 @@ yargs
       }
     },
     handler: async args => {
-      deploy(args as any as Setup & {lambdaS3Bucket: string})
+      deploy(args as any as Setup & { lambdaS3Bucket: string })
     }
   })
   .command('setup_aws', 'Add extra configuration to the lambda set-up that CloudFoundry wont support. Run after "sam deploy"', {
@@ -94,7 +95,7 @@ yargs
       }
     },
     handler: async args => {
-      write_to_aws((args as any).lambdaAccessKeyId, (args as any).lambdaSecretAccessKey, (args as any).region)
+      write_to_aws((args as any).lambdaAccessKeyId, (args as any).lambdaSecretAccessKey, (args as any).region, path.join(__dirname, '..', 'built', 'ui.js'))
     }
   })
   .command('s3_assets', 'Fetch the Lambda ARN to use as the S3 notification target and the S3 policy. Should be run after a deploy.', {

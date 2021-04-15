@@ -5,7 +5,7 @@ import * as zlib from 'zlib'
 
 const BASE = path.join(__dirname, '..')
 const OUTPUT = path.join(BASE, 'out', 'index.html')
-const UI_AWS = path.join(BASE, 'built', 'ui.js')
+// const UI_AWS = path.join(BASE, 'built', 'ui.js')
 
 export async function lambda_base_url(credentials: AWS.Credentials, region: string) {
   const A = new AWS.APIGateway({
@@ -21,7 +21,7 @@ export async function lambda_base_url(credentials: AWS.Credentials, region: stri
 const HTML_SEARCH = `const SEGMENT_CSV_BASE_URL = '`
 const AWS_SEARCH = `const UI = '`
 
-export async function write_to_aws(lambda_access_key: string, lambda_secret_key: string, region: string) {
+export async function write_to_aws(lambda_access_key: string, lambda_secret_key: string, region: string, built_dir: string) {
   try {
     const credentials = new AWS.Credentials({
       accessKeyId: lambda_access_key,
@@ -36,20 +36,19 @@ export async function write_to_aws(lambda_access_key: string, lambda_secret_key:
     const j = ss.indexOf('\'')
 
     const ui_output = s.substring(0, i) + base_url + ss.substring(j)
+    const UIJS = path.join(built_dir, 'ui.js')
 
     await new Promise((resolve, reject) => {
       zlib.gzip(ui_output, function (error, gzipped_ui_output) {
         if (error) {
           reject(error)
         } else {
-          const aws_ui = fs.readFileSync(UI_AWS, 'utf8')
+          const aws_ui = fs.readFileSync(UIJS, 'utf8')
           const i = aws_ui.indexOf(AWS_SEARCH) + AWS_SEARCH.length
           const ss = aws_ui.substring(i)
           const j = ss.indexOf('\'')
-          console.log(i)
-          console.log(j)
           const aws_ui_output = aws_ui.substring(0, i) + gzipped_ui_output.toString('base64') + ss.substring(j)
-          fs.writeFileSync(UI_AWS, aws_ui_output, 'utf8')
+          fs.writeFileSync(UIJS, aws_ui_output, 'utf8')
           resolve(undefined)
         }
       })

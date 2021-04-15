@@ -1,4 +1,10 @@
 import * as AWS from 'aws-sdk'
+// import archiver from 'archiver'
+import temp from 'temp'
+import { spawn } from 'child_process'
+import * as path from 'path'
+// import * as fs from 'fs'
+import * as fs from 'fs-extra'
 
 export type Setup = SetupBasic & {
   // Details of S3 bucket
@@ -17,6 +23,14 @@ export type SetupBasic = {
   lambdaSecretAccessKey: string
 }
 
+const BASE = path.join(__dirname, '..')
+const AWS_DEPS_PKG = path.join(BASE, 'aws-deps', 'package.json')
+const AWS_DEPS_PKG_LOCK = path.join(BASE, 'aws-deps', 'package-lock.json')
+const AWS_CODE = path.join(BASE, 'built')
+// const AWS_TESTS = path.join(BASE, '__tests__')
+const SPEC = path.join(BASE, 'template.yaml')
+// const BUILD_SPEC = path.join(BASE, 'buildspec.yml')
+
 function get_aws(lambdaAccessKeyId: string, lambdaSecretAccessKey: string, region: string) {
   const credentials = new AWS.Credentials({
     accessKeyId: lambdaAccessKeyId,
@@ -33,6 +47,44 @@ function get_aws(lambdaAccessKeyId: string, lambdaSecretAccessKey: string, regio
       credentials
     })
   }
+}
+
+export function prepare_aws() {
+  return new Promise<string>((resolve, reject) => {
+    // temp.track()
+    temp.mkdir('segment-csv', function (err, dirPath) {
+      if (err) {
+        console.error(err)
+        reject(err)
+      } else {
+        fs.copyFileSync(SPEC, path.join(dirPath, 'template.yaml'))
+        // fs.copyFileSync(BUILD_SPEC, path.join(dirPath, 'buildspec.yml'))
+        fs.copySync(AWS_CODE, path.join(dirPath, 'built'))
+        fs.copyFileSync(AWS_DEPS_PKG, path.join(dirPath, 'built', 'package.json'))
+        fs.copyFileSync(AWS_DEPS_PKG_LOCK, path.join(dirPath, 'built', 'package-lock.json'))
+        // fs.copySync(AWS_TESTS, path.join(dirPath, '__tests__'))
+        const sam = spawn('npm', ['i'], { cwd: path.join(dirPath, 'built') })
+
+        console.log(dirPath)
+        sam.stdout.on('data', function (data) {
+          console.log(data.toString())
+        });
+
+        sam.stderr.on('data', function (data) {
+          console.error(data.toString())
+        });
+
+        sam.on('exit', function (code) {
+          if (code == 0) {
+            resolve(undefined)
+          } else {
+            reject('"npm i" exited with code ' + code.toString())
+          }
+        })
+        resolve(dirPath)
+      }
+    })
+  })
 }
 
 export function get_lambda(lambda: AWS.Lambda, fn_name: string) {
@@ -143,7 +195,7 @@ export async function setup({ s3BucketName, s3AccountId, region, lambdaAccessKey
     SourceArn: `arn:aws:s3:::${s3BucketName}`,
     SourceAccount: s3AccountId,
     Principal: 's3.amazonaws.com',
-    StatementId: 's3_invoke_on_csv',
+    StatementId: 's3_invoke_on_csv-' + s3BucketName,
   }).promise().catch(e => {
     if (e.code !== 'ResourceConflictException') {
       console.error(e)

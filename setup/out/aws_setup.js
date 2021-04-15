@@ -54,9 +54,25 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setup = exports.config_for_s3 = exports.get_lambda = void 0;
+exports.setup = exports.config_for_s3 = exports.get_lambda = exports.prepare_aws = void 0;
 var AWS = __importStar(require("aws-sdk"));
+// import archiver from 'archiver'
+var temp_1 = __importDefault(require("temp"));
+var child_process_1 = require("child_process");
+var path = __importStar(require("path"));
+// import * as fs from 'fs'
+var fs = __importStar(require("fs-extra"));
+var BASE = path.join(__dirname, '..');
+var AWS_DEPS_PKG = path.join(BASE, 'aws-deps', 'package.json');
+var AWS_DEPS_PKG_LOCK = path.join(BASE, 'aws-deps', 'package-lock.json');
+var AWS_CODE = path.join(BASE, 'built');
+// const AWS_TESTS = path.join(BASE, '__tests__')
+var SPEC = path.join(BASE, 'template.yaml');
+// const BUILD_SPEC = path.join(BASE, 'buildspec.yml')
 function get_aws(lambdaAccessKeyId, lambdaSecretAccessKey, region) {
     var credentials = new AWS.Credentials({
         accessKeyId: lambdaAccessKeyId,
@@ -73,6 +89,43 @@ function get_aws(lambdaAccessKeyId, lambdaSecretAccessKey, region) {
         })
     };
 }
+function prepare_aws() {
+    return new Promise(function (resolve, reject) {
+        // temp.track()
+        temp_1.default.mkdir('segment-csv', function (err, dirPath) {
+            if (err) {
+                console.error(err);
+                reject(err);
+            }
+            else {
+                fs.copyFileSync(SPEC, path.join(dirPath, 'template.yaml'));
+                // fs.copyFileSync(BUILD_SPEC, path.join(dirPath, 'buildspec.yml'))
+                fs.copySync(AWS_CODE, path.join(dirPath, 'built'));
+                fs.copyFileSync(AWS_DEPS_PKG, path.join(dirPath, 'built', 'package.json'));
+                fs.copyFileSync(AWS_DEPS_PKG_LOCK, path.join(dirPath, 'built', 'package-lock.json'));
+                // fs.copySync(AWS_TESTS, path.join(dirPath, '__tests__'))
+                var sam = child_process_1.spawn('npm', ['i'], { cwd: path.join(dirPath, 'built') });
+                console.log(dirPath);
+                sam.stdout.on('data', function (data) {
+                    console.log(data.toString());
+                });
+                sam.stderr.on('data', function (data) {
+                    console.error(data.toString());
+                });
+                sam.on('exit', function (code) {
+                    if (code == 0) {
+                        resolve(undefined);
+                    }
+                    else {
+                        reject('"npm i" exited with code ' + code.toString());
+                    }
+                });
+                resolve(dirPath);
+            }
+        });
+    });
+}
+exports.prepare_aws = prepare_aws;
 function get_lambda(lambda, fn_name) {
     return lambda.getFunction({
         FunctionName: fn_name
@@ -192,7 +245,7 @@ function setup(_a) {
                 SourceArn: "arn:aws:s3:::" + s3BucketName,
                 SourceAccount: s3AccountId,
                 Principal: 's3.amazonaws.com',
-                StatementId: 's3_invoke_on_csv',
+                StatementId: 's3_invoke_on_csv-' + s3BucketName,
             }).promise().catch(function (e) {
                 if (e.code !== 'ResourceConflictException') {
                     console.error(e);

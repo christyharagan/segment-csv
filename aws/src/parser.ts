@@ -29,8 +29,18 @@ export async function parse(s3_bucket: string, s3_key: string, analytics: NodeAn
     ...options
   })
 
+  if (!mapping.kind) {
+    error(analytics, {}, s3_key, s3_bucket, 'Config must specify kind of either "track" or "identify"')
+    return
+  }
+
   let row = 1
   const error_rows: number[] = []
+
+  s3.getObject({
+    Bucket: s3_bucket,
+    Key: s3_key
+  }).promise().then(s => console.log(s.Body.toString()))
 
   return new Promise((resolve, reject) => {
     s3.getObject({

@@ -60,6 +60,7 @@ var yargs = __importStar(require("yargs"));
 var aws_setup_1 = require("./aws_setup");
 var build_ui_1 = require("./build_ui");
 var deploy_1 = require("./deploy");
+var path = __importStar(require("path"));
 yargs
     .command('deploy', 'Perform a full build and deploy.', {
     builder: {
@@ -156,7 +157,7 @@ yargs
     },
     handler: function (args) { return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            build_ui_1.write_to_aws(args.lambdaAccessKeyId, args.lambdaSecretAccessKey, args.region);
+            build_ui_1.write_to_aws(args.lambdaAccessKeyId, args.lambdaSecretAccessKey, args.region, path.join(__dirname, '..', 'built', 'ui.js'));
             return [2 /*return*/];
         });
     }); }

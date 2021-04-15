@@ -29,7 +29,7 @@ async function lambda(event) {
         };
     }
     const key = event.queryStringParameters.key;
-    const _a = JSON.parse(event.body), { bucket, type } = _a, config = __rest(_a, ["bucket", "type"]);
+    const _a = JSON.parse(event.body), { bucket } = _a, config = __rest(_a, ["bucket"]);
     let output = '[';
     const analytics = test_analytics(msg => {
         output += `${msg}`;
@@ -52,7 +52,7 @@ async function lambda(event) {
     return {
         statusCode: 200,
         headers: {},
-        body: output.substring(0, output.length - 1) + ']'
+        body: output.length == 1 ? '[]' : (output.substring(0, output.length - 1) + ']')
     };
 }
 exports.lambda = lambda;
@@ -76,4 +76,4 @@ function test_analytics(output) {
     };
 }
 exports.test_analytics = test_analytics;
-//# sourceMappingURL=test.js.map
+//# sourceMappingURL=test_config.js.map

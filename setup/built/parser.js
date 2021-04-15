@@ -61,8 +61,16 @@ async function parse(s3_bucket, s3_key, analytics, options, mapping, event_name)
                 }
             }
         } }, options));
+    if (!mapping.kind) {
+        error_1.error(analytics, {}, s3_key, s3_bucket, 'Config must specify kind of either "track" or "identify"');
+        return;
+    }
     let row = 1;
     const error_rows = [];
+    s3.getObject({
+        Bucket: s3_bucket,
+        Key: s3_key
+    }).promise().then(s => console.log(s.Body.toString()));
     return new Promise((resolve, reject) => {
         s3.getObject({
             Bucket: s3_bucket,

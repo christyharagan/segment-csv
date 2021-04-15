@@ -1,6 +1,6 @@
 {
   "name": "segment-csv-setup",
-  "version": "0.2.1",
+  "version": "0.3.1",
   "description": "Segment CSV Import - CLI for managing deployments",
   "repository": "christyharagan/segment-csv",
   "author": {
@@ -13,26 +13,27 @@
     "segcsv": "out/cli.js"
   },
   "devDependencies": {
-    "@types/node": "^14.14.37",
+    "@types/archiver": "^5.1.0",
+    "@types/fs-extra": "^9.0.11",
     "@types/html-webpack-plugin": "^3.2.2",
     "@types/memory-fs": "^0.3.2",
+    "@types/node": "^14.14.37",
+    "@types/temp": "^0.9.0",
     "@types/webpack": "^4.41.6",
     "@types/yargs": "^15.0.3"
   },
   "dependencies": {
     "aws-sdk": "^2.883.0",
+    "css-loader": "^3.2.0",
+    "file-loader": "^5.1.0",
+    "fs-extra": "^9.1.0",
     "html-webpack-inline-source-plugin": "0.0.10",
     "html-webpack-plugin": "^3.2.0",
     "memory-fs": "^0.5.0",
-    "yargs": "^15.1.0",
-    "css-loader": "^3.2.0",
-    "file-loader": "^5.1.0",
     "source-map-loader": "^1.0.0",
     "style-loader": "^1.0.0",
+    "temp": "^0.9.4",
     "webpack": "^4.41.6",
-    "analytics-node": "^4.0.1",
-    "csv-parser": "^3.0.0",
-    "segment-typescript-definitions": "^0.2.11",
-    "uuid": "^8.3.2"
+    "yargs": "^15.1.0"
   }
 }
